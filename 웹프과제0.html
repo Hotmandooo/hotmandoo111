@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to 상명서점</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: "맑은 고딕", sans-serif; }
+        a { text-decoration: none; color: black; cursor: pointer; }
+        ul, ol { padding: 0; margin: 0; list-style: none; }
+
+        header { padding: 20px 10px; overflow: hidden; }
+        .logo { font-size: 40px; font-weight: bold; color: navy; float: left; margin-left: 20px; }
+        .top-menu { float: right; margin-top: 20px; font-size: 14px; margin-right: 20px; }
+        .top-menu a { margin-left: 10px; color: #333; }
+
+        nav { 
+            background-color: cyan; 
+            height: 40px; line-height: 40px; padding: 0 20px; clear: both; 
+        }
+        .nav-left { float: left; }
+        .nav-left a { margin-right: 20px; font-weight: bold; }
+        .nav-right { float: right; font-weight: bold; }
+
+        #container { width: 100%; overflow: hidden; padding-top: 20px; }
+
+        .page-section { display: none; padding: 0 20px; }
+        #page-main { display: block; } 
+
+        .content-area { 
+            float: left; width: 75%; 
+            border: 1px solid #ccc; min-height: 500px; 
+            text-align: center; overflow: hidden;
+        }
+        .sidebar { float: right; width: 20%; text-align: center; }
+
+        .sidebar button {
+            display: block; width: 100%; padding: 10px; margin-bottom: 5px;
+            background-color: #f0f0f0; border: 1px solid #ccc;
+            font-size: 14px; color: #555; cursor: pointer;
+        }
+        .sidebar button:hover { background-color: #ddd; }
+
+        .book-list-container { padding: 20px; text-align: left; }
+        .book-row { margin-bottom: 30px; overflow: hidden; }
+        .book-row h3 { border-bottom: 2px solid navy; padding-bottom: 5px; margin-bottom: 15px; }
+        
+        .book-item { 
+            float: left; width: 30%; margin-right: 3%; 
+            text-align: center; height: 250px;
+        }
+        .book-item img { 
+            width: 100px; height: 140px; 
+            border: 1px solid #ddd; box-shadow: 2px 2px 5px #eee; 
+            display: block; margin: 0 auto 10px auto;
+        }
+        .book-item p { font-size: 12px; margin: 5px 0; }
+
+        .multimedia-box {
+            position: relative;
+            width: 100%; height: 100%;
+            background-image: url('dvd_bg.jpg'); 
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            border: 3px solid #6699cc; 
+            box-sizing: border-box;
+            padding: 20px;
+        }
+        .video-player-wrap {
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 50px;
+            color: white;
+        }
+        .controls {
+            margin-top: 10px; padding: 5px;
+            background: #fff; border-radius: 5px; text-align: left; color: black;
+        }
+        .controls button { cursor: pointer; }
+
+        table { width: 90%; margin: 20px auto; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #eee; }
+
+        .login-frame {
+            width: 500px; height: 300px; background-color: #dcdcdc;
+            margin: 50px auto; border: 1px solid #999; position: relative;
+        }
+        .login-inner {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #777; padding: 20px; width: 350px;
+            background-color: #f0f0f0;
+        }
+
+        footer { 
+            clear: both; margin-top: 20px; padding: 20px; 
+            border-top: 1px solid #ccc; overflow: hidden; 
+        }
+        .footer-left { float: left; font-size: 12px; color: #555; }
+        .footer-right { float: right; }
+        .footer-right img { width: 30px; margin-left: 5px; vertical-align: middle; }
+    </style>
+
+    <script type="text/javascript">
+        var books = [
+            { id:1, title:"컴퓨터와 IT기술의 이해", price:27000, img:"book_kor1.jpg", type:"kor" },
+            { id:2, title:"소셜미디어의 이해와 활용", price:21000, img:"book_kor2.jpg", type:"kor" },
+            { id:3, title:"멀티미디어 배움터 2.0", price:25000, img:"book_kor3.jpg", type:"kor" },
+            { id:4, title:"HTML5 웹프로그래밍 입문", price:28000, img:"book_kor4.jpg", type:"kor" },
+            { id:5, title:"Understanding Computers", price:35000, img:"book_for1.jpg", type:"for" },
+            { id:6, title:"Discovering Computers", price:32000, img:"book_for2.jpg", type:"for" },
+            { id:7, title:"What is HTML5?", price:15000, img:"book_for3.jpg", type:"for" },
+            { id:8, title:"JavaScript: The Good Parts", price:18000, img:"book_for4.jpg", type:"for" }
+        ];
+
+        function showSection(id) {
+            var sections = document.getElementsByClassName("page-section");
+            for(var i=0; i<sections.length; i++) sections[i].style.display = "none";
+            document.getElementById(id).style.display = "block";
+        }
+
+        function displayBooks(mode) {
+            var content = document.getElementById("main-content");
+            var html = "";
+
+            if(mode == 'all') {
+                html = '<img src="bookshelf.jpg" style="width:100%; height:100%; object-fit:cover;">';
+            } 
+            else if(mode == 'best') {
+                html = "<div class='book-list-container'>";
+                html += "<div class='book-row'><h3>국내 베스트셀러</h3>";
+                for(var i=0; i<3; i++) html += makeBookItem(books[i]); 
+                html += "</div>";
+                
+                html += "<div class='book-row'><h3>해외 베스트셀러</h3>";
+                for(var i=4; i<7; i++) html += makeBookItem(books[i]);
+                html += "</div></div>";
+            } 
+            else if(mode == 'rec') {
+                html = "<div class='book-list-container'><div class='book-row'><h3>이달의 추천도서</h3>";
+                html += makeBookItem(books[3]); 
+                html += makeBookItem(books[7]); 
+                html += "</div></div>";
+            }
+            content.innerHTML = html;
+        }
+
+        function makeBookItem(book) {
+            return "<div class='book-item'><img src='" + book.img + "' alt='표지'><p><strong>" + book.title + "</strong></p><p>" + book.price + "원</p></div>";
+        }
+
+        function getGeo() {
+            var box = document.getElementById("geo-info");
+            if(navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos){
+                    box.innerHTML = "위도: " + pos.coords.latitude.toFixed(2) + " 경도: " + pos.coords.longitude.toFixed(2);
+                });
+            } else {
+                alert("지원하지 않는 브라우저입니다.");
+            }
+        }
+
+        window.onload = function() {
+            var myVideo = document.getElementById("myVideo");
+            var playBtn = document.getElementById("btnPlay");
+            var timeSpan = document.getElementById("videoTime");
+            var volControl = document.getElementById("volRange");
+
+            playBtn.addEventListener("click", play);
+            myVideo.addEventListener("timeupdate", updateTime);
+            volControl.addEventListener("change", updateVolume);
+
+            function play() {
+                if(myVideo.paused) {
+                    playBtn.innerHTML = "|| 일시정지"; 
+                    myVideo.play();
+                } else {
+                    playBtn.innerHTML = "▶ 재생"; 
+                    myVideo.pause();
+                }
+            }
+
+            function updateTime() {
+                timeSpan.innerHTML = Math.floor(myVideo.currentTime) + " / " + Math.floor(myVideo.duration);
+            }
+
+            function updateVolume() {
+                myVideo.volume = volControl.value;
+            }
+        }
+
+        function calc() {
+            var p = [27000, 21000, 28000];
+            var total = 0;
+            for(var i=1; i<=3; i++) {
+                var q = document.getElementById("q"+i).value;
+                if(q=="") q=0;
+                var sum = p[i-1] * parseInt(q);
+                document.getElementById("s"+i).value = sum;
+                total += sum;
+            }
+            document.getElementById("total").value = total;
+        }
+
+        function resetForm() {
+            document.orderForm.reset();
+            calc();
+            document.getElementById("order-result").style.display = "none";
+        }
+
+        function submitOrder() {
+            var t = document.getElementById("total").value;
+            if(t == 0) {
+                alert("상품을 선택해주세요."); return;
+            }
+            var res = document.getElementById("order-result");
+            res.innerHTML = "<h3>주문 내역</h3><p>총 주문 금액: <strong>" + t + "원</strong>입니다.</p>";
+            res.style.display = "block";
+        }
+
+        function login() {
+            var id = document.getElementById("uid").value;
+            if(id == "") { alert("아이디를 입력하세요."); return; }
+            localStorage.setItem("user", id);
+            alert(id + "님 로그인 되었습니다.");
+            showSection('page-main');
+        }
+
+        function goOrderPage() {
+            showSection('page-order');
+            var u = localStorage.getItem("user");
+            if(u) document.getElementById("order-welcome").innerHTML = u + "님의 주문 내역입니다";
+        }
+    </script>
+</head>
+<body>
+
+    <header>
+        <div class="logo">상명 서점</div>
+        <div class="top-menu">
+            <a onclick="showSection('page-login')">로그인</a> | 
+            <a href="#">회원가입</a>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-left">
+            <a onclick="showSection('page-main'); displayBooks('all');">국내도서</a>
+            <a onclick="showSection('page-main'); displayBooks('all');">해외번역도서</a>
+            <a onclick="showSection('page-video')">음반/DVD</a>
+        </div>
+        <div class="nav-right">
+            <a onclick="goOrderPage()">주문하기</a>
+        </div>
+    </nav>
+
+    <div id="container">
+        <section id="page-main" class="page-section">
+            <div class="content-area" id="main-content">
+                <img src="bookshelf.jpg" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+
+            <div class="sidebar">
+                <button onclick="displayBooks('all')">전체</button>
+                <button onclick="displayBooks('best')">베스트셀러</button>
+                <button onclick="displayBooks('rec')">추천도서</button>
+                <button style="display:none;">메모하기</button>
+                <button onclick="getGeo()">현재위치</button>
+                <div id="geo-info" style="font-size:11px; color:blue; margin-top:5px;"></div>
+            </div>
+        </section>
+
+        <section id="page-video" class="page-section">
+            <div class="content-area" style="border:none;">
+                <h2 style="position:absolute; margin:15px; z-index:10;">음반/DVD</h2>
+                <div class="multimedia-box">
+                    <center>
+                        <div class="video-player-wrap">
+                            <video id="myVideo" src="video.mp4" width="480" height="320" style="background:black;"></video>
+                            
+                            <div class="controls">
+                                <button id="btnPlay">▶ 재생</button>
+                                <span id="videoTime" style="margin: 0 10px;">0 / 0</span>
+                                <span style="float:right;">
+                                    볼륨: <input type="range" id="volRange" min="0" max="1" step="0.1" value="1">
+                                </span>
+                            </div>
+                        </div>
+                    </center>
+                </div>
+            </div>
+            <div class="sidebar">
+                <button onclick="showSection('page-main'); displayBooks('all')">전체</button>
+                <button onclick="showSection('page-main'); displayBooks('best')">베스트셀러</button>
+                <button onclick="showSection('page-main'); displayBooks('rec')">추천도서</button>
+                <button style="display:none;">메모하기</button>
+                <button onclick="getGeo()">현재위치</button>
+            </div>
+        </section>
+
+        <section id="page-order" class="page-section">
+            <h2 id="order-welcome">주문하기</h2>
+            <form name="orderForm">
+                <table>
+                    <tr><th>책 제목</th><th>가격</th><th>수량</th><th>합계</th></tr>
+                    <tr>
+                        <td>컴퓨터와 IT기술의 이해</td>
+                        <td>27,000원</td>
+                        <td><input type="text" id="q1" size="3" value="0" onkeyup="calc()"></td>
+                        <td><input type="text" id="s1" size="8" value="0" readonly>원</td>
+                    </tr>
+                    <tr>
+                        <td>소셜미디어의 이해와 활용</td>
+                        <td>21,000원</td>
+                        <td><input type="text" id="q2" size="3" value="0" onkeyup="calc()"></td>
+                        <td><input type="text" id="s2" size="8" value="0" readonly>원</td>
+                    </tr>
+                    <tr>
+                        <td>비즈니스 정보 시스템</td>
+                        <td>28,000원</td>
+                        <td><input type="text" id="q3" size="3" value="0" onkeyup="calc()"></td>
+                        <td><input type="text" id="s3" size="8" value="0" readonly>원</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><strong>합계</strong></td>
+                        <td><input type="text" id="total" size="8" value="0" readonly>원</td>
+                    </tr>
+                </table>
+                <div style="text-align:right; width:90%; margin:auto;">
+                    <button type="button" onclick="calc()">합계계산</button>
+                    <button type="reset" onclick="resetForm()">초기화</button>
+                    <button type="button" onclick="submitOrder()">주문하기</button>
+                </div>
+            </form>
+            <div id="order-result" style="width:90%; margin:20px auto; border:1px solid #aaa; padding:10px; display:none;"></div>
+        </section>
+
+        <section id="page-login" class="page-section">
+            <div class="login-frame">
+                <div class="login-inner">
+                    <p><strong>회원가입 아이디/비밀번호찾기</strong></p>
+                    <p>사용자 아이디 <input type="text" id="uid"></p>
+                    <p>비밀번호 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="password" id="upw"></p>
+                    <div style="text-align:center; margin-top:20px;">
+                        <button onclick="login()">로그인</button>
+                        <button onclick="showSection('page-main')">취소</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-left">
+            Copyright (c) 2016 SM Bookstore Inc. All rights reserved
+        </div>
+        <div class="footer-right">
+            <img src="sns_f.png" alt="Facebook">
+            <img src="sns_t.png" alt="Twitter">
+            <img src="sns_g.png" alt="Google+">
+            <a href="https://github.com" target="_blank"><img src="icon_github.png" alt="Github"></a>
+        </div>
+    </footer>
+
+</body>
+</html>
