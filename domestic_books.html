@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Book List</title>
+<link rel="stylesheet" type="text/css" href="style-size.css"/>
+<link rel="stylesheet" type="text/css" href="style-layout.css"/>
+<link rel="stylesheet" type="text/css" href="style-presentation.css"/>
+<style>
+    
+    .clear { clear: both; height: 0; overflow: hidden; }
+    
+    .booklist ul li img { width: 100px; height: 140px; }
+</style>
+<script>
+    
+    var books = [
+        
+        { title:"컴퓨터와 IT기술의 이해", price:"27,000원", img:"images/book1.jpg" },
+        { title:"소셜미디어의 이해와 활용", price:"21,000원", img:"images/book5.jpg" }, 
+        { title:"멀티미디어 배움터 2.0", price:"25,000원", img:"images/book6.jpg" },   
+        { title:"HTML5 웹프로그래밍 입문", price:"28,000원", img:"images/book2.jpg" }, 
+        
+        
+        { title:"Understanding Computers", price:"35,000원", img:"images/fbook1.jpg" }, 
+        { title:"Discovering Computers", price:"32,000원", img:"images/fbook2.jpg" },   
+        { title:"What is HTML5?", price:"15,000원", img:"images/fbook3.jpg" },          
+        { title:"JavaScript: The Good Parts", price:"18,000원", img:"images/fbook4.jpg" } 
+    ];
+
+    window.onload = function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var mode = urlParams.get('mode');
+        var container = document.getElementById("list_content");
+        var titleDiv = document.getElementById("page_title");
+        var html = "";
+
+        if (mode === 'intro') {
+            
+            titleDiv.style.display = 'none'; 
+            
+            html = "<img src='images/aerialview.jpg' style='width:100%; height:480px; object-fit:cover; border:none;'>";
+        }
+
+       
+        else if (!mode || mode === 'all') {
+            titleDiv.innerHTML = "전체 도서 목록";
+            html += "<ul>";
+            
+            for(var i=0; i < books.length; i++) {
+                html += makeItem(books[i]);
+            }
+            html += "</ul>";
+        } 
+        
+        else if (mode === 'kor') {
+            titleDiv.innerHTML = "국내 도서";
+            html += "<ul>";
+            for(var i=0; i<=3; i++) html += makeItem(books[i]);
+            html += "</ul>";
+        }
+        
+        else if (mode === 'for') {
+            titleDiv.innerHTML = "해외 번역 도서";
+            html += "<ul>";
+            for(var i=4; i<=7; i++) html += makeItem(books[i]);
+            html += "</ul>";
+        }
+        
+        else if (mode === 'best') {
+            titleDiv.innerHTML = "베스트셀러";
+            
+            html += "<h3>국내 베스트셀러</h3><ul>";
+            for(var i=0; i<=2; i++) html += makeItem(books[i]);
+            html += "</ul>";
+            
+            
+            html += "<div class='clear'></div><hr style='border:0; margin:10px 0;'>";
+
+            html += "<h3>해외 베스트셀러</h3><ul>";
+            for(var i=4; i<=6; i++) html += makeItem(books[i]);
+            html += "</ul>";
+        }
+        
+        else if (mode === 'rec') {
+            titleDiv.innerHTML = "이달의 추천 도서";
+            html += "<ul>";
+            html += makeItem(books[3]); 
+            html += makeItem(books[7]); 
+            html += "</ul>";
+        }
+
+        container.innerHTML = html;
+    }
+
+    
+    function makeItem(b) {
+        return "<li><img src='"+b.img+"'><br><strong>"+b.title+"</strong><br>"+b.price+"</li>";
+    }
+</script>
+</head>
+<body class="booklist">
+    <div class="head" id="page_title">도서 목록</div>
+    <div id="list_content">
+        </div>
+</body>
+</html>

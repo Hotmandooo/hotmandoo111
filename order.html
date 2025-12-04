@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title> Order Page </title>
+<link rel="stylesheet" type="text/css" href="style-size.css"/>
+<link rel="stylesheet" type="text/css" href="style-layout.css"/>
+<link rel="stylesheet" type="text/css" href="style-presentation.css"/>
+<script>
+    
+    function calc() {
+        var prices = [27000, 21000, 28000];
+        var total = 0;
+        
+        for(var i=1; i<=3; i++) {
+            var q = document.getElementById("q"+i).value;
+            if(q == "") q = 0;
+            var sum = prices[i-1] * parseInt(q);
+            document.getElementById("s"+i).value = sum.toLocaleString();
+            total += sum;
+        }
+        document.getElementById("total").value = total.toLocaleString();
+    }
+
+    function order() {
+        var t = document.getElementById("total").value;
+        if(t == "0" || t == "") {
+            alert("상품을 선택해주세요.");
+        } else {
+            var res = document.getElementById("order_result");
+            res.innerHTML = "<h3>주문 내역</h3>총 결제 금액: <strong>" + t + "원</strong>";
+            res.style.border = "2px solid blue";
+            res.style.padding = "10px";
+            res.style.marginTop = "10px";
+        }
+    }
+
+    function init() {
+        
+        var user = localStorage.getItem("user");
+        if(user) document.getElementById("order_title").innerText = user + "님의 주문 내역입니다";
+    }
+    
+    window.onload = init;
+</script>
+</head>
+<body id="order">
+<div class="head" id="order_title"> 서적 주문 양식 </div>
+<form>
+    <p> 주문서 </p>
+    <table>
+        <tr> <th> 책 제목 </th> <th> 가격 </th> <th> 수량 </th> <th> 합계 </th> </tr>
+        <tr>
+            <td> 컴퓨터와 IT기술의 이해 </td> <td> 27,000원 </td>
+            <td> <input type="text" id="q1" size="2" value="0" onkeyup="calc()"/> </td>
+            <td> <input type="text" id="s1" size="6" value="0" readonly/> 원</td>
+        </tr>
+        <tr>
+            <td> 소셜미디어의 이해와 활용 </td> <td> 21,000원 </td>
+            <td> <input type="text" id="q2" size="2" value="0" onkeyup="calc()"/> </td>
+            <td> <input type="text" id="s2" size="6" value="0" readonly/> 원</td>
+        </tr>
+        <tr>
+            <td> 비즈니스 정보 시스템 </td> <td> 28,000원 </td>
+            <td> <input type="text" id="q3" size="2" value="0" onkeyup="calc()"/> </td>
+            <td> <input type="text" id="s3" size="6" value="0" readonly/> 원</td>
+        </tr>
+        <tr>
+            <td> 합계 </td> <td> &nbsp; </td>
+            <td> &nbsp; </td>
+            <td> <input type="text" id="total" size="6" value="0" readonly style="color:red; font-weight:bold;"/> 원</td>
+        </tr>
+    </table> <br />
+    <input type="button" value="합계계산" onclick="calc()"/>
+    <input type="reset" value="초기화" onclick="calc()"/>
+    <input type="button" value="주문하기" onclick="order()"/>
+</form>
+<div id="order_result"></div>
+</body>
+</html>
